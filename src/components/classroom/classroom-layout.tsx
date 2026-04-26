@@ -108,6 +108,7 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
 
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
+    player.mute();
     player.playVideo();
   };
 

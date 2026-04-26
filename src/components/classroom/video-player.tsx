@@ -57,7 +57,6 @@ export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, o
         videoId,
         playerVars: {
           'playsinline': 1,
-          'autoplay': 1,
           'controls': 1,
           'rel': 0,
         },
@@ -69,7 +68,7 @@ export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, o
           },
           'onStateChange': (event: any) => {
             const playerState = event.data;
-            onStateChange(playerState === window.YT.PlayerState.PLAYING);
+            onStateChange(playerState === window.YT.PlayerState.PLAYING || playerState === window.YT.PlayerState.BUFFERING);
 
             switch(playerState) {
               case window.YT.PlayerState.UNSTARTED: setPlayerStatus("Unstarted"); break;
