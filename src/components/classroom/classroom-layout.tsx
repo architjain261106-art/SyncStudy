@@ -57,7 +57,9 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
     let timer: NodeJS.Timeout;
     if (isSessionActive) {
       timer = setInterval(() => {
-        setSessionTime(prev => prev + 1);
+        if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
+            setSessionTime(playerRef.current.getCurrentTime());
+        }
       }, 1000);
     }
     return () => clearInterval(timer);
@@ -106,6 +108,7 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
 
   const handlePlayerReady = (player: any) => {
     playerRef.current = player;
+    player.playVideo();
   };
 
   const handlePlayerStateChange = (isPlaying: boolean) => {
