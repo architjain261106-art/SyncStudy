@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "student-a",
+      "description": "Avatar for Virtual Student A",
+      "imageUrl": "https://picsum.photos/seed/studentA/100/100",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "student-b",
+      "description": "Avatar for Virtual Student B",
+      "imageUrl": "https://picsum.photos/seed/studentB/100/100",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "student-c",
+      "description": "Avatar for Virtual Student C",
+      "imageUrl": "https://picsum.photos/seed/studentC/100/100",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Default avatar for the user",
+      "imageUrl": "https://picsum.photos/seed/user/100/100",
+      "imageHint": "person silhouette"
+    }
+  ]
 }
