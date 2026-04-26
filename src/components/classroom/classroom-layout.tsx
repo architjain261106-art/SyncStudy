@@ -49,8 +49,9 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
   const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null);
 
   const [isAutoPilot, setIsAutoPilot] = useState(true);
-  const playerRef = useRef<any>(null);
   
+  const playerRef = useRef<any>(null);
+  const isAiProcessing = useRef(false);
   const simulationIntervals = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
@@ -113,6 +114,12 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
   };
 
   const handlePlayerStateChange = (isPlaying: boolean) => {
+    if (isAiProcessing.current && !isPlaying) {
+      // This is an intentional pause by the AI (e.g. for a quiz).
+      // We set the session to inactive but don't fight the pause.
+      setIsSessionActive(false);
+      return;
+    }
     setIsSessionActive(isPlaying);
   };
   
@@ -143,6 +150,7 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
   };
 
   const handleQuizTrigger = () => {
+    isAiProcessing.current = true; // Set lock before pausing
     playerRef.current?.pauseVideo();
     setCurrentQuiz(sampleQuiz);
     setIsQuizVisible(true);
@@ -160,7 +168,13 @@ export default function ClassroomLayout({ youtubeUrl }: { youtubeUrl: string }) 
   const handleQuizSubmit = (score: number, total: number) => {
     setIsQuizVisible(false);
     setCurrentQuiz(null);
-    playerRef.current?.playVideo();
+    
+    isAiProcessing.current = false; // Release lock before resuming
+    // Delay resuming playback to avoid race conditions
+    setTimeout(() => {
+        playerRef.current?.playVideo();
+    }, 500);
+
     toast({
       title: 'Quiz Complete!',
       description: `You scored ${score} out of ${total}.`,

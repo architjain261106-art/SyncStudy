@@ -68,7 +68,8 @@ export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, o
           },
           'onStateChange': (event: any) => {
             const playerState = event.data;
-            onStateChange(playerState === window.YT.PlayerState.PLAYING || playerState === window.YT.PlayerState.BUFFERING);
+            // Only consider session active when the video is truly PLAYING
+            onStateChange(playerState === window.YT.PlayerState.PLAYING);
 
             switch(playerState) {
               case window.YT.PlayerState.UNSTARTED: setPlayerStatus("Unstarted"); break;
