@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: syncstudy
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.x
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CLOUDANT_URL
+        sync: false
+      - key: CLOUDANT_APIKEY
+        sync: false
