@@ -1,4 +1,4 @@
-import {virtualStudentQuestionGeneration} from '@/ai/flows/virtual-student-question-generation';
+import {virtualStudentQuestionGeneration} from '@/features/classroom/ai/virtual-student-question-generation';
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
 

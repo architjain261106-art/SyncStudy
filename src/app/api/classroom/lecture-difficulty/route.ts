@@ -1,4 +1,4 @@
-import {analyzeLectureDifficulty} from '@/ai/flows/lecture-difficulty-analysis-flow';
+import {analyzeLectureDifficulty} from '@/features/classroom/ai/lecture-difficulty-analysis-flow';
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
 

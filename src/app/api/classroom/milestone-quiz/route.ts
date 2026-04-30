@@ -1,4 +1,4 @@
-import {generateMilestoneQuiz} from '@/ai/flows/milestone-quiz-generation';
+import {generateMilestoneQuiz} from '@/features/classroom/ai/milestone-quiz-generation';
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
 

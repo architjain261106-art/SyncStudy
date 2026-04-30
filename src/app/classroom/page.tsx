@@ -1,9 +1,9 @@
-import ClassroomLayout from '@/components/classroom/classroom-layout';
+import ClassroomLayout from '@/features/classroom/components/classroom-layout';
 import { Suspense } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/core/ui/card';
 import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/core/ui/button';
 
 const YOUTUBE_VIDEO_ID_REGEX = /^[a-zA-Z0-9_-]{11}$/;
 
@@ -45,7 +45,8 @@ function ClassroomPageContent({ videoId }: { videoId: string | undefined }) {
   return <ClassroomLayout videoId={videoId} />;
 }
 
-export default function ClassroomPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
+export default async function ClassroomPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
   const videoId = searchParams?.videoId as string | undefined;
 
   return (

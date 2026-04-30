@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Youtube, Loader2 } from 'lucide-react';
+import { Youtube, Loader2, Play } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/core/ui/button';
+import { Input } from '@/core/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/core/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { getYoutubeVideoId } from '@/lib/youtube';
 
@@ -15,6 +15,18 @@ export default function LandingPage() {
   const { toast } = useToast();
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [pastSessions, setPastSessions] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch('/api/classroom/sessions')
+      .then(res => res.json())
+      .then(data => {
+        if (data.sessions) {
+          setPastSessions(data.sessions);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleLaunch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +54,8 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
-      <div className="absolute top-8 font-headline text-3xl font-bold text-primary">
+    <main className="flex min-h-screen flex-col items-center p-4 pt-16 bg-background">
+      <div className="font-headline text-4xl font-bold text-primary mb-12">
         SyncStudy AI
       </div>
       <Card className="w-full max-w-md shadow-2xl">
@@ -80,7 +92,37 @@ export default function LandingPage() {
           </form>
         </CardContent>
       </Card>
-      <footer className="absolute bottom-4 text-sm text-muted-foreground">
+
+      {pastSessions.length > 0 && (
+        <div className="mt-12 w-full max-w-4xl">
+          <h2 className="text-xl font-bold font-headline mb-4 text-center">Past Sessions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pastSessions.map((vidId) => (
+              <Card 
+                key={vidId} 
+                className="overflow-hidden cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                onClick={() => router.push(`/classroom?videoId=${vidId}`)}
+              >
+                <div className="relative aspect-video w-full bg-muted">
+                  <img 
+                    src={`https://img.youtube.com/vi/${vidId}/mqdefault.jpg`} 
+                    alt={`YouTube Video ${vidId}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                    <Play className="text-white h-12 w-12" />
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-medium text-foreground truncate">Video ID: {vidId}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <footer className="mt-auto py-8 text-sm text-muted-foreground text-center">
         Powered by AI for enhanced learning experiences.
       </footer>
     </main>

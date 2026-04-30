@@ -1,4 +1,4 @@
-import {askQuestion} from '@/ai/flows/user-question-answering';
+import {askQuestion} from '@/features/classroom/ai/user-question-answering';
 import {NextResponse} from 'next/server';
 import {z} from 'zod';
 
