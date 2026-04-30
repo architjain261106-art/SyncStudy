@@ -14,6 +14,7 @@ export default function RoomTab({ students }: RoomTabProps) {
       case 'Confused':
         return 'destructive';
       case 'Curious':
+      case 'Thinking':
         return 'secondary';
       default:
         return 'default';

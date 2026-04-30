@@ -1,4 +1,4 @@
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FileQuestion, HelpCircle, User, Bot } from 'lucide-react';
 import type { HistoryEvent } from '@/lib/types';
@@ -28,7 +28,7 @@ export default function HistoryTab({ history }: HistoryTabProps) {
   }
 
   return (
-    <ScrollArea className="h-full">
+    <div className="h-full">
       <div className="relative border-l-2 border-primary/20 ml-3 py-4">
         {history.map((event) => (
           <div key={event.id} className="mb-6 pl-8 relative before:content-[''] before:absolute before:left-[-7px] before:top-2 before:h-3 before:w-3 before:rounded-full before:bg-primary">
@@ -50,6 +50,6 @@ export default function HistoryTab({ history }: HistoryTabProps) {
           </div>
         ))}
       </div>
-    </ScrollArea>
+    </div>
   );
 }

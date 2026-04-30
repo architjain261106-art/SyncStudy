@@ -4,31 +4,30 @@ import { useEffect, useRef, useState } from 'react';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type {
+  YouTubePlayer,
+  YouTubePlayerReadyEvent,
+  YouTubePlayerStateChangeEvent,
+  YouTubeWindow,
+} from '@/lib/youtube-player';
 
 type VideoPlayerProps = {
   videoId: string;
   isAutoPilot: boolean;
   onAutoPilotChange: (isAutoPilot: boolean) => void;
-  onReady: (player: any) => void;
+  onReady: (player: YouTubePlayer) => void;
   onStateChange: (isPlaying: boolean) => void;
 };
 
-// This helps avoid type errors with the YouTube API not being available on initial render
-declare global {
-  interface Window {
-    YT: any;
-    onYouTubeIframeAPIReady: (() => void) | undefined;
-  }
-}
-
 export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, onReady, onStateChange }: VideoPlayerProps) {
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YouTubePlayer | null>(null);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const [isApiReady, setIsApiReady] = useState(false);
   const [playerStatus, setPlayerStatus] = useState("Loading...");
 
   useEffect(() => {
-    if (window.YT && window.YT.Player) {
+    const youtubeWindow = window as YouTubeWindow;
+    if (youtubeWindow.YT?.Player) {
       setIsApiReady(true);
     } else {
       const tag = document.createElement('script');
@@ -36,24 +35,25 @@ export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, o
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
-      window.onYouTubeIframeAPIReady = () => {
+      youtubeWindow.onYouTubeIframeAPIReady = () => {
         setIsApiReady(true);
       };
     }
 
     return () => {
-      if (window.onYouTubeIframeAPIReady) {
-        window.onYouTubeIframeAPIReady = undefined;
+      if (youtubeWindow.onYouTubeIframeAPIReady) {
+        youtubeWindow.onYouTubeIframeAPIReady = undefined;
       }
     };
   }, []);
 
   useEffect(() => {
-    if (isApiReady && videoId && playerContainerRef.current) {
+    const youtubeWindow = window as YouTubeWindow;
+    if (isApiReady && videoId && playerContainerRef.current && youtubeWindow.YT?.Player) {
       if (playerRef.current) {
         playerRef.current.destroy();
       }
-      const player = new window.YT.Player(playerContainerRef.current, {
+      const player = new youtubeWindow.YT.Player(playerContainerRef.current, {
         videoId,
         playerVars: {
           'playsinline': 1,
@@ -61,30 +61,33 @@ export default function VideoPlayer({ videoId, isAutoPilot, onAutoPilotChange, o
           'rel': 0,
         },
         events: {
-          'onReady': (event: any) => {
+          'onReady': (event: YouTubePlayerReadyEvent) => {
             playerRef.current = event.target;
             onReady(event.target);
             setPlayerStatus("Ready");
           },
-          'onStateChange': (event: any) => {
+          'onStateChange': (event: YouTubePlayerStateChangeEvent) => {
             const playerState = event.data;
             // Only consider session active when the video is truly PLAYING
-            onStateChange(playerState === window.YT.PlayerState.PLAYING);
+            onStateChange(playerState === youtubeWindow.YT!.PlayerState.PLAYING);
 
             switch(playerState) {
-              case window.YT.PlayerState.UNSTARTED: setPlayerStatus("Unstarted"); break;
-              case window.YT.PlayerState.ENDED: setPlayerStatus("Finished"); break;
-              case window.YT.PlayerState.PLAYING: setPlayerStatus("Playing"); break;
-              case window.YT.PlayerState.PAUSED: setPlayerStatus("Paused"); break;
-              case window.YT.PlayerState.BUFFERING: setPlayerStatus("Buffering..."); break;
-              case window.YT.PlayerState.CUED: setPlayerStatus("Cued"); break;
+              case youtubeWindow.YT!.PlayerState.UNSTARTED: setPlayerStatus("Unstarted"); break;
+              case youtubeWindow.YT!.PlayerState.ENDED: setPlayerStatus("Finished"); break;
+              case youtubeWindow.YT!.PlayerState.PLAYING: setPlayerStatus("Playing"); break;
+              case youtubeWindow.YT!.PlayerState.PAUSED: setPlayerStatus("Paused"); break;
+              case youtubeWindow.YT!.PlayerState.BUFFERING: setPlayerStatus("Buffering..."); break;
+              case youtubeWindow.YT!.PlayerState.CUED: setPlayerStatus("Cued"); break;
               default: setPlayerStatus("Unknown");
             }
           }
         }
       });
+      return () => {
+        player.destroy();
+      };
     }
-  }, [isApiReady, videoId, onReady, onStateChange]);
+  }, [isApiReady, onReady, onStateChange, videoId]);
 
   return (
     <div className="space-y-4">

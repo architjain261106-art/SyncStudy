@@ -7,10 +7,11 @@ import { CornerDownLeft, Loader2 } from 'lucide-react';
 import { Label } from '../ui/label';
 
 type AskQuestionFormProps = {
-  onAskQuestion: (question: string) => void;
+  onAskQuestion: (question: string) => Promise<void> | void;
+  disabled?: boolean;
 };
 
-export default function AskQuestionForm({ onAskQuestion }: AskQuestionFormProps) {
+export default function AskQuestionForm({ onAskQuestion, disabled = false }: AskQuestionFormProps) {
   const [question, setQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,13 +20,10 @@ export default function AskQuestionForm({ onAskQuestion }: AskQuestionFormProps)
     if (!question.trim()) return;
 
     setIsSubmitting(true);
-    onAskQuestion(question);
-    
-    // Simulate network request
-    setTimeout(() => {
+    Promise.resolve(onAskQuestion(question.trim())).finally(() => {
         setQuestion('');
         setIsSubmitting(false);
-    }, 1000);
+    });
   };
 
   return (
@@ -34,15 +32,15 @@ export default function AskQuestionForm({ onAskQuestion }: AskQuestionFormProps)
       <div className="flex items-center gap-2">
         <Input
           id="ask-question-input"
-          placeholder="Type your question..."
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          disabled={isSubmitting}
-        />
-        <Button type="submit" size="icon" disabled={isSubmitting}>
-          {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CornerDownLeft className="h-4 w-4" />}
-          <span className="sr-only">Submit question</span>
-        </Button>
+           placeholder="Type your question..."
+           value={question}
+           onChange={(e) => setQuestion(e.target.value)}
+           disabled={isSubmitting || disabled}
+         />
+         <Button type="submit" size="icon" disabled={isSubmitting || disabled}>
+           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CornerDownLeft className="h-4 w-4" />}
+           <span className="sr-only">Submit question</span>
+         </Button>
       </div>
     </form>
   );

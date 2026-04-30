@@ -41,18 +41,15 @@ const userQuestionAnsweringPrompt = ai.definePrompt({
   output: {schema: UserQuestionAnsweringOutputSchema},
   prompt: `You are a helpful and knowledgeable teaching assistant for a virtual classroom.
 Your task is to answer a student's question based on the provided lecture context.
-Be concise, clear, and directly address the question using only the information available in the context.
-If the question cannot be answered from the provided context, state that you cannot find the answer in the given information.
+Be concise, clear, and directly address the question using the information available in the context.
+If the question cannot be answered from the provided context, use your general knowledge about the topic to provide a helpful answer, but still relate it back to the general subject of the lecture if possible.
 
 Lecture Context (from {{timestamp}} if provided):
 """
 {{{lectureContext}}}
 """
 
-Student's Question: "{{{question}}}"
-
-Provide your answer in the following JSON format:
-{{jsonSchema output}}`,
+Student's Question: "{{{question}}}"`,
 });
 
 // 4. Define the Flow

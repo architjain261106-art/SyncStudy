@@ -38,7 +38,7 @@ export default function LandingPage() {
     }
 
     setIsLoading(true);
-    router.push(`/classroom?youtubeUrl=${encodeURIComponent(youtubeUrl)}`);
+    router.push(`/classroom?videoId=${videoId}`);
   };
 
   return (

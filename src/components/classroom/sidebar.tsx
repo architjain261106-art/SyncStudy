@@ -10,10 +10,11 @@ import type { HistoryEvent, VirtualStudent } from '@/lib/types';
 type ClassroomSidebarProps = {
   students: VirtualStudent[];
   history: HistoryEvent[];
-  onAskQuestion: (question: string) => void;
+  onAskQuestion: (question: string) => Promise<void> | void;
+  askDisabled?: boolean;
 };
 
-export default function ClassroomSidebar({ students, history, onAskQuestion }: ClassroomSidebarProps) {
+export default function ClassroomSidebar({ students, history, onAskQuestion, askDisabled = false }: ClassroomSidebarProps) {
   return (
     <aside className="w-full md:w-[350px] lg:w-[400px] shrink-0 border-l bg-background/50 flex flex-col">
       <div className="flex-1 flex flex-col">
@@ -31,7 +32,7 @@ export default function ClassroomSidebar({ students, history, onAskQuestion }: C
         </Tabs>
       </div>
       <div className="border-t p-4">
-        <AskQuestionForm onAskQuestion={onAskQuestion} />
+        <AskQuestionForm onAskQuestion={onAskQuestion} disabled={askDisabled} />
       </div>
     </aside>
   );
